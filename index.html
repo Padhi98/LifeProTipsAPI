@@ -4,57 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Life Advice</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.mdc-typography--headline4 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 600;  /* Apple tends to use semibold for headlines */
+    letter-spacing: -0.015em;  /* Apple's typical tight letter spacing */
+}
+
+.mdc-typography--body1, 
+.mdc-typography--body2 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -0.01em;
+}
+        :root {
+            --mdc-theme-primary: #6200ee;
+            --mdc-theme-secondary: #018786;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background: #f9f9f9;
+        
+        .mdc-card {
+            border-radius: 8px;
+            transition: box-shadow 0.3s ease;
         }
-        h1 {
-            color: #333;
+        
+        .elevation-1:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
-        p {
-            font-size: 18px;
+        
+        .advice-card {
+            min-height: 200px;
         }
-        .source-link {
-            display: block;
-            margin-top: 10px;
-            color: blue;
-            text-decoration: none;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+
+        .fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg,
+                rgba(207,216,220,0.2),
+                rgba(207,216,220,0.4),
+                rgba(207,216,220,0.2));
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .mdc-card__primary-action {
+            padding: 1rem;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>💡 Random Life Advice</h1>
-        <p id="advice">Loading...</p>
-        <p id="details"></p>
-        <a id="source" class="source-link" target="_blank">View on Reddit</a>
-        <br>
-        <button onclick="fetchAdvice()">🔄 Get Another Advice</button>
+<body class="min-h-screen bg-gray-100 p-4">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header Card -->
+        <div class="mdc-card mb-4">
+            <div class="p-6 bg-purple-700 text-white">
+                <h1 class="text-3xl font-bold text-center mdc-typography--headline4">Random Life Advice</h1>
+                <p class="text-center mt-2 text-gray-100 mdc-typography--subtitle1">Daily wisdom to inspire and guide you</p>
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="mdc-card advice-card elevation-1">
+            <div class="mdc-card__primary-action" tabindex="0">
+                <div class="p-6">
+                    <div id="advice-container" class="fade-in">
+                        <!-- Loading State -->
+                        <div class="animate-pulse" id="loading">
+                            <div class="h-4 loading-shimmer rounded w-3/4 mb-4"></div>
+                            <div class="h-4 loading-shimmer rounded w-1/2"></div>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="mdc-typography">
+                            <p id="advice" class="text-xl font-medium text-gray-800 mb-4 hidden mdc-typography--body1"></p>
+                            <p id="details" class="text-gray-600 text-lg hidden mdc-typography--body2"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="mdc-card__actions border-t border-gray-200">
+                <div class="mdc-card__action-buttons p-4 flex justify-between items-center w-full">
+                    <a id="source" target="_blank" class="hidden mdc-button mdc-button--raised">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            View Full Post
+                        </span>
+                    </a>
+                    <button onclick="fetchAdvice()" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Get New Advice</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Initialize all MDC components
+        mdc.autoInit();
+
         async function fetchAdvice() {
+            // Show loading state
+            document.getElementById("loading").classList.remove("hidden");
+            document.getElementById("advice").classList.add("hidden");
+            document.getElementById("details").classList.add("hidden");
+            document.getElementById("source").classList.add("hidden");
+
             try {
-                const response = await fetch("");  
+                const response = await fetch("http://127.0.0.1:8000/advice");
                 const data = await response.json();
 
-                document.getElementById("advice").innerText = data.advice;
-                document.getElementById("details").innerText = data.details || "No additional details available.";
-                document.getElementById("source").href = data.source;
-                document.getElementById("source").innerText = "🔗 View Full Post";
+                // Hide loading state
+                document.getElementById("loading").classList.add("hidden");
+                
+                // Show content with fade-in animation
+                const adviceEl = document.getElementById("advice");
+                const detailsEl = document.getElementById("details");
+                const sourceEl = document.getElementById("source");
+
+                adviceEl.innerText = data.advice;
+                detailsEl.innerText = data.details || "No additional details.";
+                sourceEl.href = data.source;
+
+                adviceEl.classList.remove("hidden");
+                detailsEl.classList.remove("hidden");
+                sourceEl.classList.remove("hidden");
+
+                // Reset animation
+                const container = document.getElementById("advice-container");
+                container.style.animation = 'none';
+                container.offsetHeight; // Trigger reflow
+                container.style.animation = null;
+
+            } catch (error) {
+                console.error("Error fetching advice:", error);
+                document.getElementById("loading").classList.add("hidden");
+                document.getElementById("advice").classList.remove("hidden");
+                document.getElementById("advice").innerText = "Failed to load advice. Please try again.";
+            }
+        }
+
+        // Initial load
+        fetchAdvice();
+    </script>
+</body>
+</html>
