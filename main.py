@@ -40,3 +40,6 @@ def get_random_advice():
 
     except Exception as e:
         return {"error": str(e)}
+
+def handler(req, res):
+    return app
