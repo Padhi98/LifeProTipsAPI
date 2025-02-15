@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Life Advice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 18px;
+        }
+        .source-link {
+            display: block;
+            margin-top: 10px;
+            color: blue;
+            text-decoration: none;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💡 Random Life Advice</h1>
+        <p id="advice">Loading...</p>
+        <p id="details"></p>
+        <a id="source" class="source-link" target="_blank">View on Reddit</a>
+        <br>
+        <button onclick="fetchAdvice()">🔄 Get Another Advice</button>
+    </div>
+
+    <script>
+        async function fetchAdvice() {
+            try {
+                const response = await fetch("");  // Replace with your API URL
+                const data = await response.json();
+
+                document.getElementById("advice").innerText = data.advice;
+                document.getElementById("details").innerText = data.details || "No additional details available.";
+                document.getElementById("source").href = data.source;
+                document.getElementById("source").innerText = "🔗 View Full Post";
+   
