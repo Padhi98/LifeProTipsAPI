@@ -51,11 +51,10 @@
     <script>
         async function fetchAdvice() {
             try {
-                const response = await fetch("https://life-pro-tips-czs62fvdq-padhi98s-projects.vercel.app");  
+                const response = await fetch("");  
                 const data = await response.json();
 
                 document.getElementById("advice").innerText = data.advice;
                 document.getElementById("details").innerText = data.details || "No additional details available.";
                 document.getElementById("source").href = data.source;
                 document.getElementById("source").innerText = "🔗 View Full Post";
-   
